@@ -1,4 +1,8 @@
-import { useState } from "react";
+import React from "react";
+import Search from "./Components/search";
+import Logo from "./Components/logo";
+import NumResults from "./Components/numResults";
+import ListBox from "./Components/ListBox";
 
 const tempMovieData = [
   {
@@ -24,28 +28,39 @@ const tempMovieData = [
   },
 ];
 export default function App() {
-  return <Navbar />;
+  const [movies, setMovies] = React.useState(tempMovieData);
+  return (
+    <>
+      <Navbar data={movies} />
+      <Main data={movies} />
+    </>
+  );
 }
 
-function Navbar() {
-  const [query, setQuery] = React.useState("");
-
+function Navbar(props) {
   return (
     <nav className="nav-bar">
-      <div className="logo">
-        <span>🕶️</span>
-        <h1>Search Movies</h1>
-      </div>
-
-      <input
-        className="search"
-        type="text"
-        placeholder="Search for a movie...."
-      />
-
-      <p className="num-results">
-        Found <strong>x </strong> results.
-      </p>
+      <Logo />
+      <Search />
+      <NumResults data={props.data} />
     </nav>
+  );
+}
+
+function Main(props) {
+  const [isOpen2, setIsOpen2] = React.useState(true);
+  function toggle2() {
+    setIsOpen2((it) => !it);
+  }
+  return (
+    <main className="main">
+      <ListBox data={props.data} />
+      <div className="box">
+        <button className="btn-toggle" onClick={() => toggle2()}>
+          {isOpen2 ? "-" : "+"}
+          <div className="">hi</div>
+        </button>
+      </div>
+    </main>
   );
 }
