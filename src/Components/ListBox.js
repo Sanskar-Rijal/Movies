@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ListBox(props) {
+export default function ListBox({ children }) {
   const [isOpen1, setIsOpen1] = React.useState(true);
 
   function toggle1() {
@@ -12,12 +12,12 @@ export default function ListBox(props) {
       <button className="btn-toggle" onClick={() => toggle1()}>
         {isOpen1 ? "-" : "+"}
       </button>
-      {isOpen1 && <MovieList data={props.data} key={props.imdbID} />}
+      {isOpen1 && children}
     </div>
   );
 }
 
-function MovieList(props) {
+export function MovieList(props) {
   return (
     <ul className="list">
       {props.data.map((it) => (

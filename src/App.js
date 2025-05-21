@@ -4,6 +4,7 @@ import Logo from "./Components/logo";
 import NumResults from "./Components/numResults";
 import ListBox from "./Components/ListBox";
 import WatchedBox from "./Components/watchbox";
+import { MovieList } from "./Components/ListBox";
 
 const tempMovieData = [
   {
@@ -30,11 +31,20 @@ const tempMovieData = [
 ];
 
 export default function App() {
-  const [movies, setMovies] = React.useState(tempMovieData);
+  //const [movies, setMovies] = React.useState(tempMovieData);
+  const movies = tempMovieData;
   return (
     <>
-      <Navbar data={movies} key={movies.imdbID} />
-      <Main data={movies} key={movies.imdbID} />
+      <Navbar>
+        <Search />
+        <NumResults data={movies} />
+      </Navbar>
+      <Main>
+        <ListBox>
+          <MovieList data={movies} key={movies.imdbID} />
+        </ListBox>
+        <WatchedBox />
+      </Main>
     </>
   );
 }
@@ -43,17 +53,11 @@ function Navbar(props) {
   return (
     <nav className="nav-bar">
       <Logo />
-      <Search />
-      <NumResults data={props.data} />
+      {props.children}
     </nav>
   );
 }
 
-function Main(props) {
-  return (
-    <main className="main">
-      <ListBox data={props.data} />
-      <WatchedBox watched={props.data} />
-    </main>
-  );
+function Main({ children }) {
+  return <main className="main">{children}</main>;
 }

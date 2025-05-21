@@ -28,8 +28,9 @@ const average = (arr) => {
   return sum / arr.length;
 };
 
-export default function WatchedBox(props) {
-  const [watched, Setwatched] = React.useState(tempWatchedData);
+export default function WatchedBox() {
+  //const [watched, Setwatched] = React.useState(tempWatchedData);
+  const watched = tempWatchedData;
 
   const [isOpen2, setIsOpen2] = React.useState(true);
   function toggle2() {
@@ -43,7 +44,7 @@ export default function WatchedBox(props) {
       </button>
       {isOpen2 && (
         <>
-          <WatchedSummary data={props.data} watched={watched} />
+          <WatchedSummary watched={watched} />
           <WatchedMovieList watched={watched} />
         </>
       )}
