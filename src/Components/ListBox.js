@@ -12,22 +12,32 @@ export default function ListBox(props) {
       <button className="btn-toggle" onClick={() => toggle1()}>
         {isOpen1 ? "-" : "+"}
       </button>
-      {isOpen1 && (
-        <ul className="list">
-          {props.data.map((it) => (
-            <li key={it.imdbID}>
-              <img src={it.Poster} alt={it.Title} />
-              <h3>{it.Title}</h3>
-              <div>
-                <p>
-                  <span>🗓</span>
-                  <span>{it.Year}</span>
-                </p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+      {isOpen1 && <MovieList data={props.data} key={props.imdbID} />}
     </div>
+  );
+}
+
+function MovieList(props) {
+  return (
+    <ul className="list">
+      {props.data.map((it) => (
+        <Movie data={it} key={props.data.imdbID} />
+      ))}
+    </ul>
+  );
+}
+
+function Movie(props) {
+  return (
+    <li>
+      <img src={props.data.Poster} alt={props.data.Title} />
+      <h3>{props.data.Title}</h3>
+      <div>
+        <p>
+          <span>🗓</span>
+          <span>{props.data.Year}</span>
+        </p>
+      </div>
+    </li>
   );
 }

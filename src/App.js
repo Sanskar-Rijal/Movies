@@ -3,6 +3,7 @@ import Search from "./Components/search";
 import Logo from "./Components/logo";
 import NumResults from "./Components/numResults";
 import ListBox from "./Components/ListBox";
+import WatchedBox from "./Components/watchbox";
 
 const tempMovieData = [
   {
@@ -27,12 +28,13 @@ const tempMovieData = [
       "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
   },
 ];
+
 export default function App() {
   const [movies, setMovies] = React.useState(tempMovieData);
   return (
     <>
-      <Navbar data={movies} />
-      <Main data={movies} />
+      <Navbar data={movies} key={movies.imdbID} />
+      <Main data={movies} key={movies.imdbID} />
     </>
   );
 }
@@ -48,19 +50,10 @@ function Navbar(props) {
 }
 
 function Main(props) {
-  const [isOpen2, setIsOpen2] = React.useState(true);
-  function toggle2() {
-    setIsOpen2((it) => !it);
-  }
   return (
     <main className="main">
       <ListBox data={props.data} />
-      <div className="box">
-        <button className="btn-toggle" onClick={() => toggle2()}>
-          {isOpen2 ? "-" : "+"}
-          <div className="">hi</div>
-        </button>
-      </div>
+      <WatchedBox watched={props.data} />
     </main>
   );
 }
