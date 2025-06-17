@@ -35,10 +35,22 @@ const KEY = "35e8075d";
 export default function App() {
   const [movies, setMovies] = React.useState([]);
 
+  //Loading animatin when data comes
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  const query = "Annabelle";
+
   useEffect(function () {
-    fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=${KEY}&s=spider`)
-      .then((response) => response.json())
-      .then((data) => setMovies(data.Search));
+    async function fetchMovies() {
+      setIsLoading(true);
+      const response = await fetch(
+        `http://www.omdbapi.com/?i=tt3896198&apikey=${KEY}&s=${query}`
+      );
+      const data = await response.json();
+      setMovies(data.Search);
+      setIsLoading(false);
+    }
+    fetchMovies();
   }, []);
 
   console.log("Movies:", tempMovieData);
@@ -51,7 +63,11 @@ export default function App() {
       </Navbar>
       <Main>
         <ListBox>
-          <MovieList data={movies} key={movies.imdbID} />
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <MovieList data={movies} key={movies.imdbID} />
+          )}
         </ListBox>
         <WatchedBox />
       </Main>
@@ -70,4 +86,9 @@ function Navbar(props) {
 
 function Main({ children }) {
   return <main className="main">{children}</main>;
+}
+
+//Loading animation
+function Loader() {
+  return <p className="loader">Loading...</p>;
 }
