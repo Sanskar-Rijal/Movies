@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Search from "./Components/search";
 import Logo from "./Components/logo";
 import NumResults from "./Components/numResults";
@@ -30,9 +30,19 @@ const tempMovieData = [
   },
 ];
 
+const KEY = "35e8075d";
+
 export default function App() {
-  //const [movies, setMovies] = React.useState(tempMovieData);
-  const movies = tempMovieData;
+  const [movies, setMovies] = React.useState([]);
+
+  useEffect(function () {
+    fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=${KEY}&s=spider`)
+      .then((response) => response.json())
+      .then((data) => setMovies(data.Search));
+  }, []);
+
+  console.log("Movies:", tempMovieData);
+
   return (
     <>
       <Navbar>
