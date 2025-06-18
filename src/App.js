@@ -30,11 +30,11 @@ const tempMovieData = [
   },
 ];
 
-const KEY = "35e8075d";
+// const KEY = "35e8075d";
 
 export default function App() {
-  const [movies, setMovies] = React.useState([]);
-
+  const [movies, setMovies] = React.useState([""]);
+  console.log(process.env.REACT_APP_API_KEY);
   //Loading animatin when data comes
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -43,8 +43,9 @@ export default function App() {
   useEffect(function () {
     async function fetchMovies() {
       setIsLoading(true);
+      console.log(process.env.API_KEY);
       const response = await fetch(
-        `http://www.omdbapi.com/?i=tt3896198&apikey=${KEY}&s=${query}`
+        `${process.env.REACT_APP_BASE_API}/?i=tt3896198&apikey=${process.env.REACT_APP_API_KEY}&s=${query}`
       );
       const data = await response.json();
       setMovies(data.Search);
