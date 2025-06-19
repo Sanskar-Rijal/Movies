@@ -8,7 +8,7 @@ import { MovieList } from "./Components/ListBox";
 
 export default function App() {
   const [movies, setMovies] = React.useState([""]);
-  console.log(process.env.REACT_APP_API_KEY);
+
   //Loading animatin when data comes
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -19,6 +19,9 @@ export default function App() {
 
   //state for search query, i.e search bar
   const [query, setQuery] = React.useState("");
+
+  //State for selected movie
+  const [selectedId, setSelectedId] = React.useState(null);
 
   //Practice with useEffect
   // useEffect(function () {
@@ -43,7 +46,6 @@ export default function App() {
         try {
           setIsLoading(true);
           setError("");
-          console.log(process.env.API_KEY);
           const response = await fetch(
             `${process.env.REACT_APP_BASE_API}/?i=tt3896198&apikey=${process.env.REACT_APP_API_KEY}&s=${query}`
           );
@@ -61,8 +63,6 @@ export default function App() {
           }
 
           setMovies(data.Search);
-
-          //console.log(data);
 
           setIsLoading(false);
         } catch (error) {
@@ -82,6 +82,14 @@ export default function App() {
     [query]
   );
 
+  //handle click on movie
+  function handleSelectMovie(id) {
+    setSelectedId((currid) => (currid === id ? null : id));
+  }
+  function CloseSelectedMovie() {
+    setSelectedId(null);
+  }
+
   return (
     <>
       <Navbar>
@@ -99,11 +107,15 @@ export default function App() {
           {isLoading && <Loader />}
 
           {!isLoading && !error && (
-            <MovieList data={movies} key={movies.imdbID} />
+            <MovieList
+              data={movies}
+              key={movies.imdbID}
+              onClick={handleSelectMovie}
+            />
           )}
           {error && <ErrorMessage message={error} />}
         </ListBox>
-        <WatchedBox />
+        <WatchedBox selectedId={selectedId} onCloseMovie={CloseSelectedMovie} />
       </Main>
     </>
   );

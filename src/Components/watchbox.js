@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Children } from "react";
 
 const tempWatchedData = [
   {
@@ -28,7 +28,7 @@ const average = (arr) => {
   return sum / arr.length;
 };
 
-export default function WatchedBox() {
+export default function WatchedBox({ selectedId, onCloseMovie }) {
   //const [watched, Setwatched] = React.useState(tempWatchedData);
   const watched = tempWatchedData;
 
@@ -44,8 +44,17 @@ export default function WatchedBox() {
       </button>
       {isOpen2 && (
         <>
-          <WatchedSummary watched={watched} />
-          <WatchedMovieList watched={watched} />
+          {selectedId ? (
+            <SelectedMovie
+              selectedId={selectedId}
+              onCloseMovie={onCloseMovie}
+            />
+          ) : (
+            <>
+              <WatchedSummary watched={watched} />
+              <WatchedMovieList watched={watched} />
+            </>
+          )}
         </>
       )}
     </div>
@@ -116,5 +125,16 @@ function WatchedMovie({ it }) {
         </p>
       </div>
     </li>
+  );
+}
+
+function SelectedMovie({ selectedId, onCloseMovie }) {
+  return (
+    <div className="details">
+      <button className="btn-back" onClick={onCloseMovie}>
+        &larr;
+      </button>
+      {selectedId}
+    </div>
   );
 }

@@ -19,9 +19,9 @@ export default function ListBox({ children }) {
 
 export function MovieList(props) {
   return (
-    <ul className="list">
+    <ul className="list list-movies">
       {props.data.map((it) => (
-        <Movie data={it} key={props.data.imdbID} />
+        <Movie data={it} key={props.data.imdbID} onsel={props.onClick} />
       ))}
     </ul>
   );
@@ -29,7 +29,7 @@ export function MovieList(props) {
 
 function Movie(props) {
   return (
-    <li>
+    <li onClick={() => props.onsel(props.data.imdbID)}>
       <img src={props.data.Poster} alt={props.data.Title} />
       <h3>{props.data.Title}</h3>
       <div>
