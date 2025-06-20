@@ -2,37 +2,17 @@ import React, { useEffect } from "react";
 import StarRating from "../animation/StarRating";
 import Loader from "./Loader";
 
-const tempWatchedData = [
-  {
-    imdbID: "tt1375666",
-    Title: "Inception",
-    Year: "2010",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-    runtime: 148,
-    imdbRating: 8.8,
-    userRating: 10,
-  },
-  {
-    imdbID: "tt0088763",
-    Title: "Back to the Future",
-    Year: "1985",
-    Poster:
-      "https://m.media-amazon.com/images/M/MV5BZmU0M2Y1OGUtZjIxNi00ZjBkLTg1MjgtOWIyNThiZWIwYjRiXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",
-    runtime: 116,
-    imdbRating: 8.5,
-    userRating: 9,
-  },
-];
-
 const average = (arr) => {
   const sum = arr.reduce((acc, it) => acc + it, 0);
   return sum / arr.length;
 };
 
-export default function WatchedBox({ selectedId, onCloseMovie }) {
-  const [watched, Setwatched] = React.useState(tempWatchedData);
-
+export default function WatchedBox({
+  selectedId,
+  onCloseMovie,
+  watched,
+  onAddWatched,
+}) {
   const [isOpen2, setIsOpen2] = React.useState(true);
   function toggle2() {
     setIsOpen2((it) => !it);
@@ -47,8 +27,10 @@ export default function WatchedBox({ selectedId, onCloseMovie }) {
         <>
           {selectedId ? (
             <SelectedMovie
+              watched={watched}
               selectedId={selectedId}
               onCloseMovie={onCloseMovie}
+              onAddWatched={onAddWatched}
             />
           ) : (
             <>
@@ -109,8 +91,8 @@ function WatchedMovieList(props) {
 function WatchedMovie({ it }) {
   return (
     <li>
-      <img src={it.Poster} alt={it.Title} />
-      <h3>{it.Title}</h3>
+      <img src={it.poster} alt={it.title} />
+      <h3>{it.title}</h3>
       <div>
         <p>
           <span>⭐️</span>
@@ -130,11 +112,14 @@ function WatchedMovie({ it }) {
 }
 
 //Movie Details Component
-function SelectedMovie({ selectedId, onCloseMovie }) {
+function SelectedMovie({ selectedId, onCloseMovie, onAddWatched, watched }) {
   const [movie, setMovie] = React.useState({});
 
   //loading animation
   const [isLoading, setIsLoading] = React.useState(false);
+
+  //to Get number of Stars Clicked
+  const [count, setCount] = React.useState(0);
 
   //Destructuring the movie object
   const {
@@ -146,11 +131,27 @@ function SelectedMovie({ selectedId, onCloseMovie }) {
     Released: released,
     Actors: actors,
     Director: director,
-    imdbRating: imdbRaiting,
+    imdbRating,
     Genre: genre,
   } = movie;
 
-  console.log(title);
+  //check if movie is already added
+  const checkMovies = watched.some((item) => item.imdbID === selectedId);
+  console.log(checkMovies);
+
+  function handleAdd() {
+    const newWatchedMovie = {
+      imdbID: selectedId,
+      title,
+      year,
+      poster,
+      userRating: count,
+      imdbRating: Number(imdbRating),
+      runtime: Number(runtime.split(" ")[0]),
+    };
+    onAddWatched(newWatchedMovie);
+    onCloseMovie(); // Reset selectedId after adding to watched
+  }
 
   useEffect(
     function () {
@@ -160,7 +161,7 @@ function SelectedMovie({ selectedId, onCloseMovie }) {
           `${process.env.REACT_APP_BASE_API}/?apikey=${process.env.REACT_APP_API_KEY}&i=${selectedId}`
         );
         const data = await response.json();
-        //  console.log(data);
+        // console.log(data);
         setMovie(data);
         setIsLoading(false);
       }
@@ -188,15 +189,23 @@ function SelectedMovie({ selectedId, onCloseMovie }) {
               </p>
               <p>{genre}</p>
               <p>
-                <span>🌟</span> {imdbRaiting} IMDb raiting
+                <span>🌟</span> {imdbRating} IMDb raiting
               </p>
             </div>
           </header>
 
           <section>
-            <div className="rating">
-              <StarRating maxRaiting={10} size={22} />
-            </div>
+            {!checkMovies && (
+              <div className="rating">
+                <StarRating maxRaiting={10} size={22} onSetCount={setCount} />
+
+                {count > 0 && (
+                  <button className="btn-add" onClick={() => handleAdd()}>
+                    + Add to List
+                  </button>
+                )}
+              </div>
+            )}
             <p>
               <em>{plot}</em>
             </p>

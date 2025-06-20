@@ -7,6 +7,19 @@ import WatchedBox from "./Components/watchbox";
 import { MovieList } from "./Components/ListBox";
 import Loader from "./Components/Loader";
 
+const tempWatchedData = [
+  {
+    imdbID: "tt1375666",
+    title: "Inception",
+    year: "2010",
+    poster:
+      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
+    runtime: 148,
+    imdbRating: 8,
+    userRating: 10,
+  },
+];
+
 export default function App() {
   const [movies, setMovies] = React.useState([""]);
 
@@ -23,6 +36,9 @@ export default function App() {
 
   //State for selected movie
   const [selectedId, setSelectedId] = React.useState(null);
+
+  //state for watched movies
+  const [watched, setwatched] = React.useState(tempWatchedData);
 
   //Practice with useEffect
   // useEffect(function () {
@@ -91,6 +107,11 @@ export default function App() {
     setSelectedId(null);
   }
 
+  //function to handle watched movies
+  function handleAddWatched(movie) {
+    setwatched((current) => [...current, movie]);
+  }
+
   return (
     <>
       <Navbar>
@@ -116,7 +137,12 @@ export default function App() {
           )}
           {error && <ErrorMessage message={error} />}
         </ListBox>
-        <WatchedBox selectedId={selectedId} onCloseMovie={CloseSelectedMovie} />
+        <WatchedBox
+          selectedId={selectedId}
+          onCloseMovie={CloseSelectedMovie}
+          watched={watched}
+          onAddWatched={handleAddWatched}
+        />
       </Main>
     </>
   );
