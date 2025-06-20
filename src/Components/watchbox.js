@@ -1,4 +1,6 @@
-import React, { Children } from "react";
+import React, { useEffect } from "react";
+import StarRating from "../animation/StarRating";
+import Loader from "./Loader";
 
 const tempWatchedData = [
   {
@@ -29,8 +31,7 @@ const average = (arr) => {
 };
 
 export default function WatchedBox({ selectedId, onCloseMovie }) {
-  //const [watched, Setwatched] = React.useState(tempWatchedData);
-  const watched = tempWatchedData;
+  const [watched, Setwatched] = React.useState(tempWatchedData);
 
   const [isOpen2, setIsOpen2] = React.useState(true);
   function toggle2() {
@@ -128,13 +129,82 @@ function WatchedMovie({ it }) {
   );
 }
 
+//Movie Details Component
 function SelectedMovie({ selectedId, onCloseMovie }) {
+  const [movie, setMovie] = React.useState({});
+
+  //loading animation
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  //Destructuring the movie object
+  const {
+    Title: title,
+    Year: year,
+    Poster: poster,
+    Runtime: runtime,
+    Plot: plot,
+    Released: released,
+    Actors: actors,
+    Director: director,
+    imdbRating: imdbRaiting,
+    Genre: genre,
+  } = movie;
+
+  console.log(title);
+
+  useEffect(
+    function () {
+      async function getMovieDetails() {
+        setIsLoading(true);
+        const response = await fetch(
+          `${process.env.REACT_APP_BASE_API}/?apikey=${process.env.REACT_APP_API_KEY}&i=${selectedId}`
+        );
+        const data = await response.json();
+        //  console.log(data);
+        setMovie(data);
+        setIsLoading(false);
+      }
+      getMovieDetails();
+    },
+    [selectedId]
+  ); //we want to happen each time the component renders , so it's empty dependency array
+
   return (
     <div className="details">
-      <button className="btn-back" onClick={onCloseMovie}>
-        &larr;
-      </button>
-      {selectedId}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <header>
+            <button className="btn-back" onClick={onCloseMovie}>
+              &larr;
+            </button>
+
+            <img src={poster} alt={`Poster of ${title} movie`} />
+            <div className="details-overview">
+              <h2>{title}</h2>
+              <p>
+                {released} &bull; {runtime}
+              </p>
+              <p>{genre}</p>
+              <p>
+                <span>🌟</span> {imdbRaiting} IMDb raiting
+              </p>
+            </div>
+          </header>
+
+          <section>
+            <div className="rating">
+              <StarRating maxRaiting={10} size={22} />
+            </div>
+            <p>
+              <em>{plot}</em>
+            </p>
+            <p>Starring {actors}</p>
+            <p>Directed by {director}</p>
+          </section>
+        </>
+      )}
     </div>
   );
 }

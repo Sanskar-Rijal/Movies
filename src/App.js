@@ -5,6 +5,7 @@ import NumResults from "./Components/numResults";
 import ListBox from "./Components/ListBox";
 import WatchedBox from "./Components/watchbox";
 import { MovieList } from "./Components/ListBox";
+import Loader from "./Components/Loader";
 
 export default function App() {
   const [movies, setMovies] = React.useState([""]);
@@ -47,7 +48,7 @@ export default function App() {
           setIsLoading(true);
           setError("");
           const response = await fetch(
-            `${process.env.REACT_APP_BASE_API}/?i=tt3896198&apikey=${process.env.REACT_APP_API_KEY}&s=${query}`
+            `${process.env.REACT_APP_BASE_API}/?apikey=${process.env.REACT_APP_API_KEY}&s=${query}`
           );
 
           //console.log(process.env.REACT_APP_BASE_API);
@@ -79,7 +80,7 @@ export default function App() {
       }
       fetchMovies();
     },
-    [query]
+    [query, movies.length]
   );
 
   //handle click on movie
@@ -132,11 +133,6 @@ function Navbar(props) {
 
 function Main({ children }) {
   return <main className="main">{children}</main>;
-}
-
-//Loading animation
-function Loader() {
-  return <p className="loader">Loading...</p>;
 }
 
 function ErrorMessage({ message }) {
