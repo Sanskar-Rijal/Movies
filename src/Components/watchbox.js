@@ -49,10 +49,14 @@ function WatchedSummary(props) {
     props.watched.map((movies) => {
       return movies.imdbRating;
     })
-  );
+  ).toFixed(2);
 
-  const avgUserRating = average(props.watched.map((movie) => movie.userRating));
-  const avgRuntime = average(props.watched.map((movie) => movie.runtime));
+  const avgUserRating = average(
+    props.watched.map((movie) => movie.userRating)
+  ).toFixed(2);
+  const avgRuntime = average(
+    props.watched.map((movie) => movie.runtime)
+  ).toFixed(2);
   return (
     <div className="summary">
       <h2>Movies You Have Watched</h2>
@@ -170,6 +174,21 @@ function SelectedMovie({ selectedId, onCloseMovie, onAddWatched, watched }) {
     [selectedId]
   ); //we want to happen each time the component renders , so it's empty dependency array
 
+  //useEffect to change document title
+  useEffect(
+    function () {
+      if (!title) return; //If no title is available then return early
+      document.title = `Movie | ${title}`;
+
+      //clean up function
+      return function () {
+        document.title = "Movie";
+        console.log("Clean up function called");
+      };
+    },
+    [title]
+  );
+
   return (
     <div className="details">
       {isLoading ? (
@@ -177,7 +196,7 @@ function SelectedMovie({ selectedId, onCloseMovie, onAddWatched, watched }) {
       ) : (
         <>
           <header>
-            <button className="btn-back" onClick={onCloseMovie}>
+            <button className="btn-back" onClick={() => onCloseMovie()}>
               &larr;
             </button>
 

@@ -94,9 +94,20 @@ export default function App() {
         setError("");
         return;
       }
-      fetchMovies();
+
+      if (query.trim().length < 3) {
+        setMovies([]);
+        setError("");
+        return;
+      }
+
+      //fetch movies when user stops typing
+      const timeoutID = setTimeout(() => {
+        fetchMovies();
+      }, 500);
+      return () => clearTimeout(timeoutID);
     },
-    [query, movies.length]
+    [query]
   );
 
   //handle click on movie
