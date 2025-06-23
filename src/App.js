@@ -59,12 +59,16 @@ export default function App() {
 
   useEffect(
     function () {
+      //using abort funciton to handle api request
+      const controller = new AbortController();
+
       async function fetchMovies() {
         try {
           setIsLoading(true);
           setError("");
           const response = await fetch(
-            `${process.env.REACT_APP_BASE_API}/?apikey=${process.env.REACT_APP_API_KEY}&s=${query}`
+            `${process.env.REACT_APP_BASE_API}/?apikey=${process.env.REACT_APP_API_KEY}&s=${query}`,
+            { signal: controller.signal }
           );
 
           //console.log(process.env.REACT_APP_BASE_API);
@@ -80,11 +84,13 @@ export default function App() {
           }
 
           setMovies(data.Search);
-
+          setError("");
           setIsLoading(false);
         } catch (error) {
           console.error("Error fetching movies:", error);
-          setError(error.message);
+          if (error.name != "AbortError") {
+            setError(error.message);
+          }
         } finally {
           setIsLoading(false);
         }
@@ -100,12 +106,17 @@ export default function App() {
         setError("");
         return;
       }
+      fetchMovies();
 
-      //fetch movies when user stops typing
-      const timeoutID = setTimeout(() => {
-        fetchMovies();
-      }, 500);
-      return () => clearTimeout(timeoutID);
+      return function () {
+        controller.abort(); //cancelling the previous request when new one comes in.
+      };
+
+      // //fetch movies when user stops typing
+      // const timeoutID = setTimeout(() => {
+      //   fetchMovies();
+      // }, 500);
+      // return () => clearTimeout(timeoutID);
     },
     [query]
   );
