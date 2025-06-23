@@ -7,19 +7,6 @@ import WatchedBox from "./Components/watchbox";
 import { MovieList } from "./Components/ListBox";
 import Loader from "./Components/Loader";
 
-const tempWatchedData = [
-  {
-    imdbID: "tt1375666",
-    title: "Inception",
-    year: "2010",
-    poster:
-      "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-    runtime: 148,
-    imdbRating: 8,
-    userRating: 10,
-  },
-];
-
 export default function App() {
   const [movies, setMovies] = React.useState([""]);
 
@@ -38,7 +25,7 @@ export default function App() {
   const [selectedId, setSelectedId] = React.useState(null);
 
   //state for watched movies
-  const [watched, setwatched] = React.useState(tempWatchedData);
+  const [watched, setwatched] = React.useState([]);
 
   //Practice with useEffect
   // useEffect(function () {
