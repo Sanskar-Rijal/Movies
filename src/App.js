@@ -74,7 +74,7 @@ export default function App() {
           setError("");
           setIsLoading(false);
         } catch (error) {
-          console.error("Error fetching movies:", error);
+          // console.error("Error fetching movies:", error);
           if (error.name != "AbortError") {
             setError(error.message);
           }
@@ -93,6 +93,7 @@ export default function App() {
         setError("");
         return;
       }
+      CloseSelectedMovie(); //close the selected movie when new search comes
       fetchMovies();
 
       return function () {
@@ -119,6 +120,11 @@ export default function App() {
   //function to handle watched movies
   function handleAddWatched(movie) {
     setwatched((current) => [...current, movie]);
+  }
+
+  //function to handle deleted movies
+  function handleDeletedMovie(id) {
+    setwatched((current) => current.filter((movie) => movie.imdbID !== id)); //if it's ture then only it will return to the arrray
   }
 
   return (
@@ -151,6 +157,7 @@ export default function App() {
           onCloseMovie={CloseSelectedMovie}
           watched={watched}
           onAddWatched={handleAddWatched}
+          ondeleteMovie={handleDeletedMovie}
         />
       </Main>
     </>

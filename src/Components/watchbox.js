@@ -13,6 +13,7 @@ export default function WatchedBox({
   onCloseMovie,
   watched,
   onAddWatched,
+  ondeleteMovie,
 }) {
   const [isOpen2, setIsOpen2] = React.useState(true);
   function toggle2() {
@@ -36,7 +37,10 @@ export default function WatchedBox({
           ) : (
             <>
               <WatchedSummary watched={watched} />
-              <WatchedMovieList watched={watched} />
+              <WatchedMovieList
+                watched={watched}
+                ondeleteMovie={ondeleteMovie}
+              />
             </>
           )}
         </>
@@ -83,17 +87,17 @@ function WatchedSummary(props) {
   );
 }
 
-function WatchedMovieList(props) {
+function WatchedMovieList({ watched, ondeleteMovie }) {
   return (
     <ul className="list">
-      {props.watched.map((it) => (
-        <WatchedMovie it={it} key={it.imdbID} />
+      {watched.map((it) => (
+        <WatchedMovie it={it} key={it.imdbID} ondeleteMovie={ondeleteMovie} />
       ))}
     </ul>
   );
 }
 
-function WatchedMovie({ it }) {
+function WatchedMovie({ it, ondeleteMovie }) {
   return (
     <li>
       <img src={it.poster} alt={it.title} />
@@ -110,6 +114,14 @@ function WatchedMovie({ it }) {
         <p>
           <span>⏳</span>
           <span>{it.runtime} min</span>
+        </p>
+        <p>
+          <button
+            className="btn-delete"
+            onClick={() => ondeleteMovie(it.imdbID)}
+          >
+            X
+          </button>
         </p>
       </div>
     </li>
