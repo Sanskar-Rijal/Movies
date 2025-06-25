@@ -82,7 +82,7 @@ movies-app/
 
 ## Built With
 
-- [React](https://reactjs.org/) - Frontend framework
+- [React](https://reactjs.org/) - Library
 - [OMDB API](http://www.omdbapi.com/) - Movie database API
 - CSS3 - Styling
 
