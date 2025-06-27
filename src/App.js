@@ -25,7 +25,11 @@ export default function App() {
   const [selectedId, setSelectedId] = React.useState(null);
 
   //state for watched movies
-  const [watched, setwatched] = React.useState([]);
+  //when we use callback function in UseState it should be pure function , i.e it should not have any paramateters passed to it.
+  const [watched, setwatched] = React.useState(function () {
+    const storageValue = localStorage.getItem("watched"); // watched is the key which we used to storage data in local storage
+    return JSON.parse(storageValue); //we stored data as string in local storage , so we need to parse it
+  });
 
   //Practice with useEffect
   // useEffect(function () {
@@ -44,6 +48,36 @@ export default function App() {
   // );
   // console.log("during render");
 
+  //handle click on movie
+  function handleSelectMovie(id) {
+    setSelectedId((currid) => (currid === id ? null : id));
+  }
+  function CloseSelectedMovie() {
+    setSelectedId(null);
+  }
+
+  //function to handle watched movies
+  function handleAddWatched(movie) {
+    setwatched((current) => [...current, movie]);
+
+    //Saving Data on Local Storage
+    // localStorage.setItem("watched", JSON.stringify([...watched, movie])); we will save using useEffects
+  }
+
+  //function to handle deleted movies
+  function handleDeletedMovie(id) {
+    setwatched((current) => current.filter((movie) => movie.imdbID !== id)); //if it's ture then only it will return to the arrray
+  }
+
+  //useEffect to store movies on local storage
+  useEffect(
+    function () {
+      localStorage.setItem("watched", JSON.stringify(watched));
+    },
+    [watched]
+  );
+
+  //useEffect to fetch Movies from the API
   useEffect(
     function () {
       //using abort funciton to handle api request
@@ -108,24 +142,6 @@ export default function App() {
     },
     [query]
   );
-
-  //handle click on movie
-  function handleSelectMovie(id) {
-    setSelectedId((currid) => (currid === id ? null : id));
-  }
-  function CloseSelectedMovie() {
-    setSelectedId(null);
-  }
-
-  //function to handle watched movies
-  function handleAddWatched(movie) {
-    setwatched((current) => [...current, movie]);
-  }
-
-  //function to handle deleted movies
-  function handleDeletedMovie(id) {
-    setwatched((current) => current.filter((movie) => movie.imdbID !== id)); //if it's ture then only it will return to the arrray
-  }
 
   return (
     <>
