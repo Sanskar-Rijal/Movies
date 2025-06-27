@@ -109,7 +109,7 @@ export default function App() {
           setIsLoading(false);
         } catch (error) {
           // console.error("Error fetching movies:", error);
-          if (error.name != "AbortError") {
+          if (error.name !== "AbortError") {
             setError(error.message);
           }
         } finally {
