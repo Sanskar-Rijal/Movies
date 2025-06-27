@@ -138,6 +138,17 @@ function SelectedMovie({ selectedId, onCloseMovie, onAddWatched, watched }) {
   //to Get number of Stars Clicked
   const [count, setCount] = React.useState(0);
 
+  //count ref, number of times user has clicked on the Star to rate flim
+  const countRef = React.useRef(0);
+
+  useEffect(
+    function () {
+      //if may run on onmount , so it may add before user has added rating
+      if (count) countRef.current = countRef.current + 1;
+    },
+    [count]
+  );
+
   //Destructuring the movie object
   const {
     Title: title,
@@ -165,6 +176,7 @@ function SelectedMovie({ selectedId, onCloseMovie, onAddWatched, watched }) {
       userRating: count,
       imdbRating: Number(imdbRating),
       runtime: Number(runtime.split(" ")[0]),
+      countRatingDecisions: countRef.current,
     };
     onAddWatched(newWatchedMovie);
     onCloseMovie(); // Reset selectedId after adding to watched
