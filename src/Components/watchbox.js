@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import StarRating from "../animation/StarRating";
 import Loader from "./Loader";
+import { useKey } from "../custom/useKey";
 
 const average = (arr) => {
   if (arr.length === 0) return 0; //handle empty array
@@ -214,27 +215,8 @@ function SelectedMovie({ selectedId, onCloseMovie, onAddWatched, watched }) {
     [title]
   );
 
-  //useEffect to go back by pressing escape key
-  useEffect(
-    function () {
-      function handleEscape(e) {
-        if (e.code === "Escape") {
-          onCloseMovie();
-          // console.log("Escape key pressed, closing movie details");
-        }
-      }
-
-      //adding a event listner for escape key
-      document.addEventListener("keydown", handleEscape);
-
-      //clean up function to remove event listener
-      return function () {
-        document.removeEventListener("keydown", handleEscape);
-        // console.log("Clean up function called, removing event listener");
-      };
-    },
-    [onCloseMovie]
-  );
+  //custom hook
+  useKey("Escape", onCloseMovie);
 
   return (
     <div className="details">

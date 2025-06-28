@@ -6,16 +6,10 @@ import ListBox from "./Components/ListBox";
 import WatchedBox from "./Components/watchbox";
 import { MovieList } from "./Components/ListBox";
 import Loader from "./Components/Loader";
+import { useMovies } from "./custom/useMovies";
+import { useLocalStoraege } from "./custom/useLocalStorage";
 
 export default function App() {
-  const [movies, setMovies] = React.useState([""]);
-
-  //Loading animatin when data comes
-  const [isLoading, setIsLoading] = React.useState(false);
-
-  //for indicating error
-  const [error, setError] = React.useState("");
-
   //const tempquery = "spiderman";
 
   //state for search query, i.e search bar
@@ -24,13 +18,9 @@ export default function App() {
   //State for selected movie
   const [selectedId, setSelectedId] = React.useState(null);
 
-  //state for watched movies
-  //when we use callback function in UseState it should be pure function , i.e it should not have any paramateters passed to it.
-  const [watched, setwatched] = React.useState(function () {
-    const storageValue = localStorage.getItem("watched"); // watched is the key which we used to storage data in local storage
-    return JSON.parse(storageValue); //we stored data as string in local storage , so we need to parse it
-  });
-
+  //custom Hooks
+  const { movies, isLoading, error } = useMovies(query); //destructuring the data from useMovies custom hook
+  const [watched, setwatched] = useLocalStoraege([], "watched");
   //Practice with useEffect
   // useEffect(function () {
   //   console.log("After initial render");
@@ -68,80 +58,6 @@ export default function App() {
   function handleDeletedMovie(id) {
     setwatched((current) => current.filter((movie) => movie.imdbID !== id)); //if it's ture then only it will return to the arrray
   }
-
-  //useEffect to store movies on local storage
-  useEffect(
-    function () {
-      localStorage.setItem("watched", JSON.stringify(watched));
-    },
-    [watched]
-  );
-
-  //useEffect to fetch Movies from the API
-  useEffect(
-    function () {
-      //using abort funciton to handle api request
-      const controller = new AbortController();
-
-      async function fetchMovies() {
-        try {
-          setIsLoading(true);
-          setError("");
-          const response = await fetch(
-            `${process.env.REACT_APP_BASE_API}/?apikey=${process.env.REACT_APP_API_KEY}&s=${query}`,
-            { signal: controller.signal }
-          );
-
-          //console.log(process.env.REACT_APP_BASE_API);
-
-          if (!response.ok) {
-            throw new Error("Something went wrong,please try again later....");
-          }
-
-          const data = await response.json();
-
-          if (data.Response === "False") {
-            throw new Error("Movie not found 😭");
-          }
-
-          setMovies(data.Search);
-          setError("");
-          setIsLoading(false);
-        } catch (error) {
-          // console.error("Error fetching movies:", error);
-          if (error.name !== "AbortError") {
-            setError(error.message);
-          }
-        } finally {
-          setIsLoading(false);
-        }
-      }
-      if (!query.length) {
-        setMovies([]);
-        setError("");
-        return;
-      }
-
-      if (query.trim().length < 3) {
-        setMovies([]);
-        setError("");
-        return;
-      }
-      CloseSelectedMovie(); //close the selected movie when new search comes
-      fetchMovies();
-
-      return function () {
-        controller.abort(); //cancelling the previous request when new one comes in.
-      };
-
-      // //fetch movies when user stops typing
-      // const timeoutID = setTimeout(() => {
-      //   fetchMovies();
-      // }, 500);
-      // return () => clearTimeout(timeoutID);
-    },
-    [query]
-  );
 
   return (
     <>
